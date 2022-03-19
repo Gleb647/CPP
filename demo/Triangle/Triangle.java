@@ -1,8 +1,10 @@
 package com.example.demo.Triangle;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.*;
 
 @Component
 public class Triangle {
@@ -14,8 +16,6 @@ public class Triangle {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int thirdSide;
-    private int perimeter;
-    private double square;
 
     public Triangle(){}
 
@@ -25,16 +25,8 @@ public class Triangle {
         this.thirdSide = thirdSide;
     }
 
-    public int calculatePerimeter(){
-        return this.perimeter = this.firstSide + this.secondSide + this.thirdSide;
-    }
-
-    public double calculateSquare(){
-        double semiPerimeter;
-        semiPerimeter = (firstSide + secondSide + thirdSide) / 2;
-        this.square = Math.sqrt(semiPerimeter * Math.abs(semiPerimeter - firstSide) * Math.abs(semiPerimeter - secondSide) *
-                Math.abs(semiPerimeter - thirdSide));
-        return this.square;
+    public static boolean canExist(int first, int second, int third){
+        return (first + second > third && first + third > second && second + third > first);
     }
 
     public int getFirstSide() {
@@ -59,19 +51,4 @@ public class Triangle {
         this.thirdSide = thirdSide;
     }
 
-    public int getPerimeter() {
-        return perimeter;
-    }
-
-    public void setPerimeter(int perimeter) {
-        this.perimeter = perimeter;
-    }
-
-    public double getSquare() {
-        return square;
-    }
-
-    public void setSquare(double square) {
-        this.square = square;
-    }
 }
