@@ -79,54 +79,36 @@ public class Repository {
     }
 
     public Integer getPerimeterWithParams(Triangle triangle){
-        Integer per = 1;
-        int count = 0;
+        Integer per = 0;
+        int count = getOffset(triangle);
+        int fl = 0;
         try {
-            if (mp != null) {
-                Set<Triangle> trs = mp.keySet();
-                Iterator<Triangle> iter = trs.iterator();
-                while(iter.hasNext()){
-                    Triangle dbtr = iter.next();
-                    if (dbtr.getFirstSide() == triangle.getFirstSide() && dbtr.getSecondSide() == triangle.getSecondSide()
-                            && dbtr.getThirdSide() == triangle.getThirdSide()){
-                        int fl = 0;
-                        for (Map.Entry<Triangle, Results> entry : mp.entrySet()) {
-                            if (fl == count){
-                                per = entry.getValue().getPerimeter();
-                            }
-                            fl++;
-                        }
+            if (count != 0) {
+                for (Map.Entry<Triangle, Results> entry : mp.entrySet()) {
+                    if (fl == count - 1) {
+                        per = entry.getValue().getPerimeter();
                     }
-                    count++;
+                    fl++;
                 }
             }
         }
         catch(NullPointerException e){
-            per = 0;
+                per = 0;
         }
         return per;
     }
 
     public Double getSquareWithParams(Triangle triangle){
         Double per = 0.0;
-        int count = 0;
+        int count = getOffset(triangle);
+        int fl = 0;
         try {
-            if (mp != null) {
-                Set<Triangle> trs = mp.keySet();
-                Iterator<Triangle> iter = trs.iterator();
-                while(iter.hasNext()){
-                    Triangle dbtr = iter.next();
-                    if (dbtr.getFirstSide() == triangle.getFirstSide() && dbtr.getSecondSide() == triangle.getSecondSide()
-                            && dbtr.getThirdSide() == triangle.getThirdSide()){
-                        int fl = 0;
-                        for (Map.Entry<Triangle, Results> entry : mp.entrySet()) {
-                            if (fl == count){
-                                per = entry.getValue().getSquare();
-                            }
-                            fl++;
-                        }
+            if (count != 0) {
+                for (Map.Entry<Triangle, Results> entry : mp.entrySet()) {
+                    if (fl == count - 1) {
+                        per = entry.getValue().getSquare();
                     }
-                    count++;
+                    fl++;
                 }
             }
         }
@@ -139,5 +121,4 @@ public class Repository {
     public int getMapSize(){
         return mp.size();
     }
-
 }
