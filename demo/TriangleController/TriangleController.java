@@ -1,5 +1,7 @@
 package com.example.demo.TriangleController;
-import com.example.demo.Repository.Repository;
+import com.example.demo.Exceptions.Exceptions;
+import com.example.demo.MyLogger.MyLogger;
+import com.example.demo.Repos.Repos;
 import com.example.demo.Service.Service;
 import com.example.demo.Triangle.Triangle;
 
@@ -26,43 +28,32 @@ import java.util.Map;
 @RestController
 public class TriangleController {
 
-    Logger logger = LoggerFactory.getLogger(TriangleController.class);
+    private Repos db;
+
     @Autowired
-    Repository db;
-
-    public TriangleController(){}
-
-    public ResponseEntity ResponseError(String errorMessage, HttpServletRequest httpServletRequest, HttpStatus status){
-        Map<String, Object> response = new LinkedHashMap<>();
-        final LocalDate date = LocalDate.now();
-        final String error = errorMessage;
-        final String path = httpServletRequest.getRequestURI();
-        response.put("timestamp", date);
-        response.put("status", status.value());
-        response.put("error", error);
-        response.put("path", path);
-        return new ResponseEntity(response, status);
+    public TriangleController(Repos db){
+        this.db = db;
     }
 
     @GetMapping("/volume/perimeter")
     public ResponseEntity getPerimeter(@Valid @RequestParam(name = "first", required = false) @NotNull @Min(1) String firstSide, @RequestParam(name = "second", required = false) @NotNull @Min(1) String secondSide, @RequestParam(name = "third", required = false) @NotNull @Min(1) String thirdSide, HttpServletRequest httpServletRequest) {
-        logger.info("GET from /volume/perimeter");
+        MyLogger.info("GET from /volume/perimeter");
         int first = Integer.parseInt(firstSide);
         int second = Integer.parseInt(secondSide);
         int third = Integer.parseInt(thirdSide);
         if (!Triangle.canExist(first, second, third)){
-            logger.error("Triangle doesn't exist");
-            return ResponseError("Triangle doesn't exist", httpServletRequest, HttpStatus.INTERNAL_SERVER_ERROR);
+            MyLogger.error("Triangle doesn't exist");
+            return Exceptions.ResponseServerError(httpServletRequest, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         else {
             Triangle triangle = new Triangle(first, second, third);
 
             if (db.getMapSize() == 0){
-                logger.info("map size " + db.getMapSize());
+                MyLogger.info("map size " + db.getMapSize());
                 db.addPerimeter(triangle, Service.calculatePerimeter(triangle));
             }
             else if (db.getMapSize() != 0) {
-                logger.info("map size " + db.getMapSize());
+                MyLogger.info("map size " + db.getMapSize());
                 if (db.getOffset(triangle) != 0){
                     db.addPerimeterWithExistingParams(Service.calculatePerimeter(triangle), db.getOffset(triangle));
                 }
@@ -76,23 +67,23 @@ public class TriangleController {
 
     @GetMapping("/volume/square")
     public ResponseEntity getSquare(@Valid @RequestParam(name = "first", required = false) @NotNull @Min(1) String firstSide, @RequestParam(name = "second", required = false) @NotNull @Min(1) String secondSide, @RequestParam(name = "third", required = false) @NotNull @Min(1) String thirdSide, HttpServletRequest httpServletRequest) {
-        logger.info("GET from /volume/square");
+        MyLogger.info("GET from /volume/square");
         int first = Integer.parseInt(firstSide);
         int second = Integer.parseInt(secondSide);
         int third = Integer.parseInt(thirdSide);
         if (!Triangle.canExist(first, second, third)){
-            logger.error("Triangle doesn't exist");
-            return ResponseError("Triangle doesn't exist", httpServletRequest, HttpStatus.INTERNAL_SERVER_ERROR);
+            MyLogger.error("Triangle doesn't exist");
+            return Exceptions.ResponseServerError(httpServletRequest, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         else {
             Triangle triangle = new Triangle(first, second, third);
 
             if (db.getMapSize() == 0){
-                logger.info("map size " + db.getMapSize());
+                MyLogger.info("map size " + db.getMapSize());
                 db.addSquare(triangle, Service.calculateSquare(triangle));
             }
             else if (db.getMapSize() != 0) {
-                logger.info("map size " + db.getMapSize());
+                MyLogger.info("map size " + db.getMapSize());
                 if (db.getOffset(triangle) != 0){
                     db.addSquareWithExistingParams(Service.calculateSquare(triangle), db.getOffset(triangle));
                 }
@@ -107,7 +98,7 @@ public class TriangleController {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest httpServletRequest){
-        logger.error("Wrong request parameters provided");
-        return ResponseError("Validation error", httpServletRequest, HttpStatus.BAD_REQUEST);
+        MyLogger.error("Wrong request parameters provided");
+        return Exceptions.ResponseReqError(httpServletRequest, HttpStatus.BAD_REQUEST);
     }
 }
