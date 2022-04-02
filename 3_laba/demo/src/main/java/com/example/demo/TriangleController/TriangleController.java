@@ -76,25 +76,7 @@ public class TriangleController {
             }
             return new ResponseEntity(db.getMp().get(tr).getSquare(), HttpStatus.OK);
         }
-//        else {
-//            Triangle triangle = new Triangle(first, second, third);
-//
-//            if (db.getMapSize() == 0){
-//                MyLogger.info("map size " + db.getMapSize());
-//                db.addSquare(triangle, Service.calculateSquare(triangle));
-//            }
-//            else if (db.getMapSize() != 0) {
-//                MyLogger.info("map size " + db.getMapSize());
-//                if (db.getOffset(triangle) != 0){
-//                    db.addSquareWithExistingParams(Service.calculateSquare(triangle), db.getOffset(triangle));
-//                }
-//                else if(db.getSquareWithParams(triangle) == 0.0){
-//                    db.addSquare(triangle, Service.calculateSquare(triangle));
-//                }
-//            }
-//            return new ResponseEntity(db.getSquareWithParams(triangle), HttpStatus.OK);
-//        }
-    }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
