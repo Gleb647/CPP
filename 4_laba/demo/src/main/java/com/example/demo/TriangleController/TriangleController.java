@@ -82,8 +82,6 @@ public class TriangleController {
     }
     @GetMapping("/volume/count")
     public ResponseEntity getCount(){
-        //ResponseEntity<> res;
-        //String str = String.valueOf(counter.getCount());
         return new ResponseEntity(counter.getCount(), HttpStatus.OK);
     }
 
